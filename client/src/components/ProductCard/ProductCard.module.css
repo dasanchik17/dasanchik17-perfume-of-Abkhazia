@@ -1,0 +1,227 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    border-color 0.4s ease,
+    background 0.4s ease;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-card);
+    animation: fadeUp 0.6s ease both;
+}
+
+/* Карточки появляются с задержкой */
+.card:nth-child(1)  { animation-delay: 0.05s; }
+.card:nth-child(2)  { animation-delay: 0.1s; }
+.card:nth-child(3)  { animation-delay: 0.15s; }
+.card:nth-child(4)  { animation-delay: 0.2s; }
+.card:nth-child(5)  { animation-delay: 0.25s; }
+.card:nth-child(6)  { animation-delay: 0.3s; }
+.card:nth-child(7)  { animation-delay: 0.35s; }
+.card:nth-child(8)  { animation-delay: 0.4s; }
+
+.card:hover {
+    transform: translateY(-12px) scale(1.01);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--color-border-hover);
+    background: var(--color-glass-hover);
+}
+
+/* Блик при hover */
+.card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+            135deg,
+            rgba(201,169,110,0.04) 0%,
+            transparent 50%,
+            rgba(201,169,110,0.02) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+.card:hover::before { opacity: 1; }
+
+/* Светящаяся линия снизу при hover */
+.card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 20%; right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+}
+.card:hover::after { opacity: 1; }
+
+/* Бейджи */
+.badges {
+    position: absolute;
+    top: 12px; left: 12px;
+    z-index: 3;
+    display: flex;
+    gap: 6px;
+    flex-direction: column;
+}
+.badgeNew {
+    background: rgba(201,169,110,0.9);
+    color: #0a0808;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    width: fit-content;
+    backdrop-filter: blur(4px);
+}
+.badgeOut {
+    background: rgba(20,15,13,0.8);
+    border: 1px solid rgba(160,96,96,0.4);
+    color: #a06060;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    width: fit-content;
+    backdrop-filter: blur(4px);
+}
+
+/* Фото */
+.imageWrap {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(160deg, #1a1410 0%, #0d0a08 100%);
+}
+.image {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.card:hover .image { transform: scale(1.08); }
+
+.imagePlaceholder {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #1a1410 0%, #0d0a08 100%);
+    position: relative;
+}
+.imagePlaceholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(201,169,110,0.06) 0%, transparent 70%);
+}
+.imagePlaceholder span {
+    font-size: 64px;
+    color: rgba(201,169,110,0.1);
+    user-select: none;
+    transition: transform 0.5s ease, color 0.5s ease;
+    position: relative;
+    z-index: 1;
+}
+.card:hover .imagePlaceholder span {
+    transform: scale(1.1);
+    color: rgba(201,169,110,0.18);
+}
+
+/* Оверлей */
+.imageOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,8,8,0.6) 0%, transparent 50%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 20px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+.card:hover .imageOverlay { opacity: 1; }
+.overlayText {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    border-bottom: 1px solid rgba(201,169,110,0.5);
+    padding-bottom: 2px;
+}
+
+/* Инфо */
+.info {
+    padding: 18px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+    z-index: 1;
+}
+.brand {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    opacity: 0.8;
+}
+.name {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--color-text);
+}
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+}
+.price {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--color-text);
+    letter-spacing: 0.04em;
+}
+.gender {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+}
+.volumes {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+.volume {
+    font-size: 9px;
+    padding: 2px 8px;
+    border: 1px solid var(--color-border);
+    color: var(--color-muted);
+    letter-spacing: 0.08em;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+.card:hover .volume {
+    border-color: rgba(201,169,110,0.2);
+}
+
+@media (max-width: 768px) {
+  .info { padding: 12px 10px 10px; }
+  .name { font-size: 15px; }
+  .price { font-size: 13px; }
+  .volumes { display: none; } /* скрываем объёмы на маленьких карточках */
+  .imagePlaceholder span { font-size: 40px; }
+}

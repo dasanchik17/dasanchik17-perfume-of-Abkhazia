@@ -1,0 +1,114 @@
+.footer {
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+}
+
+.top { padding: 64px 0 48px; }
+.bottom {
+    padding: 20px 0;
+    border-top: 1px solid var(--color-border);
+    background: rgba(0,0,0,0.15);
+}
+
+.container { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
+
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
+    gap: 48px;
+}
+
+/* Brand */
+.brand {}
+.brandLogo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.logoAr { font-size: 32px; color: var(--color-gold); }
+.logoName {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+.logoSub {
+    font-style: italic;
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
+}
+.brandDesc {
+    font-size: 13px;
+    color: var(--color-muted);
+    line-height: 1.7;
+}
+
+/* Nav */
+.nav, .contacts, .address {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.navTitle {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin-bottom: 4px;
+}
+.nav a {
+    font-size: 13px;
+    color: var(--color-muted);
+    transition: color var(--transition-fast), padding-left var(--transition-fast);
+}
+.nav a:hover { color: var(--color-text); padding-left: 6px; }
+
+/* Contacts */
+.contactItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--color-muted);
+    transition: color var(--transition-fast);
+}
+.contactItem:hover { color: var(--color-text); }
+.contactIcon { font-size: 14px; flex-shrink: 0; }
+
+/* Address */
+.addressText {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--color-muted);
+    line-height: 1.6;
+}
+
+/* Bottom */
+.bottom .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.ip, .copy {
+    font-size: 11px;
+    color: var(--color-muted);
+    opacity: 0.6;
+    letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .container { padding: 0 20px; }
+}
+@media (max-width: 500px) {
+    .grid { grid-template-columns: 1fr; gap: 28px; }
+    .bottom .container { flex-direction: column; align-items: flex-start; }
+}
