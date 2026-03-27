@@ -7,17 +7,17 @@
 }
 
 :root {
-  --color-bg:           #3d1010;
-  --color-surface:      #4a1515;
-  --color-glass:        rgba(255, 255, 255, 0.04);
-  --color-glass-hover:  rgba(255, 255, 255, 0.07);
-  --color-border:       rgba(226, 215, 151, 0.15);
-  --color-border-hover: rgba(226, 215, 151, 0.4);
-  --color-gold:         #e2d797;
-  --color-gold-dim:     #b8a85a;
-  --color-gold-glow:    rgba(226, 215, 151, 0.15);
-  --color-text:         #f5f0d8;
-  --color-muted:        rgba(226, 215, 151, 0.45);
+  --color-bg:           #faf9f7;
+  --color-surface:      #f4f2ef;
+  --color-glass:        rgba(255, 255, 255, 0.8);
+  --color-glass-hover:  rgba(255, 255, 255, 0.95);
+  --color-border:       rgba(0, 0, 0, 0.08);
+  --color-border-hover: rgba(0, 0, 0, 0.2);
+  --color-gold:         #8b6914;
+  --color-gold-dim:     #b8960c;
+  --color-gold-glow:    rgba(139, 105, 20, 0.1);
+  --color-text:         #1a1814;
+  --color-muted:        #8a8680;
 
   --font-display: 'Cormorant Garamond', serif;
   --font-body:    'Jost', sans-serif;
@@ -25,9 +25,9 @@
   --transition:      0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --transition-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
-  --shadow-card:       0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.25);
-  --shadow-card-hover: 0 24px 64px rgba(0,0,0,0.5), 0 8px 24px rgba(226,215,151,0.08);
-  --shadow-glow:       0 0 40px rgba(226,215,151,0.1);
+  --shadow-card:       0 2px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 16px 48px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-glow:       0 0 40px rgba(139,105,20,0.08);
 }
 
 html {
@@ -44,10 +44,9 @@ body {
   overflow-x: hidden;
 }
 
-/* Скроллбар */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: var(--color-bg); }
-::-webkit-scrollbar-thumb { background: var(--color-gold-dim); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
 
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }

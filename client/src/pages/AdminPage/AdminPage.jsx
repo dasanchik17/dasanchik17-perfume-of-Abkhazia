@@ -3,11 +3,12 @@ import api from '../../api/index'
 import styles from './AdminPage.module.css'
 
 const EMPTY_FORM = {
-    name: '', brand: '', price: '', gender: 'унисекс',
-    category: '', volume: '', inStock: true, isNewProduct: false,
-    image: '',
-    notes: { top: '', heart: '', base: '' },
-    description: '',
+  name: '', brand: '', price: '', 
+  mlPrices: [{ ml: '', price: '' }],
+  gender: 'унисекс', category: '', volume: '',
+  inStock: true, isNewProduct: false, image: '',
+  notes: { top: '', heart: '', base: '' },
+  description: '',
 }
 
 export default function AdminPage() {
@@ -110,6 +111,9 @@ export default function AdminPage() {
             name:         product.name,
             brand:        product.brand,
             price:        product.price,
+            mlPrices: product.mlPrices?.length > 0
+  ? product.mlPrices
+  : [{ ml: '', price: '' }],
             gender:       product.gender,
             category:     product.category,
             volume:       product.volume.join(', '),
@@ -148,7 +152,10 @@ export default function AdminPage() {
     const prepareData = () => ({
         name:         form.name.trim(),
         brand:        form.brand.trim(),
-        price:        Number(form.price),
+        price:        Number(form.price) || 0,
+        mlPrices: form.mlPrices
+  .filter(row => row.ml && row.price)
+  .map(row => ({ ml: Number(row.ml), price: Number(row.price) })),
         gender:       form.gender,
         category:     form.category.trim().toLowerCase(),
         volume:       form.volume.split(',').map(v => v.trim()).filter(Boolean),
@@ -164,14 +171,16 @@ export default function AdminPage() {
     })
 
     const validate = () => {
-        if (!form.name.trim())     return 'Введите название'
-        if (!form.brand.trim())    return 'Введите бренд'
-        if (!form.price || isNaN(Number(form.price)) || Number(form.price) <= 0)
-            return 'Введите корректную цену'
-        if (!form.category.trim()) return 'Введите категорию'
-        if (!form.volume.trim())   return 'Введите объём (через запятую)'
-        return null
-    }
+  if (!form.name.trim())     return 'Введите название'
+  if (!form.brand.trim())    return 'Введите бренд'
+  if (!form.category.trim()) return 'Введите категорию'
+  if (!form.volume.trim())   return 'Введите объём (через запятую)'
+  // Цена нужна только если нет вариантов мл
+  const hasValidMlPrices = form.mlPrices.some(r => r.ml && r.price)
+  if (!hasValidMlPrices && (!form.price || Number(form.price) <= 0))
+    return 'Введите цену или добавьте варианты мл'
+  return null
+}
 
     const handleSave = async () => {
         const validationError = validate()
@@ -281,6 +290,64 @@ export default function AdminPage() {
                                         <input className={styles.input} type="number" value={form.price}
                                                onChange={handleChange('price')} placeholder="4200" />
                                     </FormField>
+                                    <FormField label="Цены за мл (распив)">
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    {form.mlPrices.map((row, i) => (
+      <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <input
+          className={styles.input}
+          type="number"
+          placeholder="мл"
+          value={row.ml}
+          style={{ width: 80 }}
+          onChange={e => {
+            const updated = form.mlPrices.map((r, idx) =>
+              idx === i ? { ...r, ml: e.target.value } : r
+            )
+            setForm(f => ({ ...f, mlPrices: updated }))
+          }}
+        />
+        <span style={{ color: 'var(--color-muted)', fontSize: 13 }}>мл —</span>
+        <input
+          className={styles.input}
+          type="number"
+          placeholder="₽"
+          value={row.price}
+          style={{ flex: 1 }}
+          onChange={e => {
+            const updated = form.mlPrices.map((r, idx) =>
+              idx === i ? { ...r, price: e.target.value } : r
+            )
+            setForm(f => ({ ...f, mlPrices: updated }))
+          }}
+        />
+        <span style={{ color: 'var(--color-muted)', fontSize: 13 }}>₽</span>
+        {form.mlPrices.length > 1 && (
+          <button
+            style={{ background: 'none', border: 'none', cursor: 'pointer',
+              color: 'var(--color-muted)', fontSize: 16, padding: '0 4px' }}
+            onClick={() => setForm(f => ({
+              ...f,
+              mlPrices: f.mlPrices.filter((_, idx) => idx !== i)
+            }))}
+          >✕</button>
+        )}
+      </div>
+    ))}
+    <button
+      style={{ background: 'none', border: '1px solid var(--color-border)',
+        padding: '6px 12px', fontSize: 11, letterSpacing: '0.1em',
+        cursor: 'pointer', color: 'var(--color-muted)', alignSelf: 'flex-start',
+        fontFamily: 'var(--font-body)' }}
+      onClick={() => setForm(f => ({
+        ...f,
+        mlPrices: [...f.mlPrices, { ml: '', price: '' }]
+      }))}
+    >
+      + Добавить вариант
+    </button>
+  </div>
+</FormField>
                                     <FormField label="Категория *">
                                         <input className={styles.input} value={form.category}
                                                onChange={handleChange('category')} placeholder="восточные" />
