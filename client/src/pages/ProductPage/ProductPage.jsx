@@ -1,135 +1,197 @@
-import { useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useProduct } from '../../hooks/useProducts'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import api from '../../api/index'
 import useCartStore from '../../store/cartStore'
+import Reveal from '../../components/Reveal/Reveal'
 import styles from './ProductPage.module.css'
 
 export default function ProductPage() {
-    const { id }     = useParams()
-    const navigate   = useNavigate()
-    const { product, loading, error } = useProduct(id)
+  const { id }       = useParams()
+  const navigate     = useNavigate()
+  const addToCart    = useCartStore(s => s.addToCart)
 
-    const [selectedVolume, setSelectedVolume] = useState(null)
-    const [added,          setAdded]          = useState(false)
-    const addItem = useCartStore(s => s.addItem)
+  const [product,    setProduct]    = useState(null)
+  const [loading,    setLoading]    = useState(true)
+  const [selectedMl, setSelectedMl] = useState(null)
+  const [added,      setAdded]      = useState(false)
 
-    if (loading) return (
-        <div className={styles.stateBox}>
-            <div className={styles.spinner} />
-        </div>
-    )
+  useEffect(() => {
+    api.get(`/products/${id}`)
+      .then(r => setProduct(r.data.product))
+      .finally(() => setLoading(false))
+  }, [id])
 
-    if (error || !product) return (
-        <div className={styles.notFound}>
-            <p>Товар не найден</p>
-            <Link to="/catalog" className={styles.backLink}>← Вернуться в каталог</Link>
-        </div>
-    )
-
-    const { _id, name, brand, price, volume, gender,
-        category, inStock, isNewProduct, image, notes } = product
-
-    const handleAddToCart = () => {
-        if (!selectedVolume) return
-        addItem(
-            { id: _id, name, brand, price, image },
-            selectedVolume
-        )
-        setAdded(true)
-        setTimeout(() => setAdded(false), 2000)
+  // После загрузки товара выбираем первый вариант
+  useEffect(() => {
+    if (product?.mlPrices?.length > 0) {
+      setSelectedMl(product.mlPrices[0])
     }
+  }, [product])
 
-    return (
-        <div className={styles.page}>
-            <div className={styles.container}>
+  if (loading) return (
+    <div className={styles.loading}>
+      <div className={styles.spinner} />
+    </div>
+  )
 
-                <nav className={styles.breadcrumb}>
-                    <Link to="/">Главная</Link>
-                    <span>→</span>
-                    <Link to="/catalog">Каталог</Link>
-                    <span>→</span>
-                    <span>{name}</span>
-                </nav>
+  if (!product) return (
+    <div className={styles.loading}>
+      <p>Товар не найден</p>
+    </div>
+  )
 
-                <div className={styles.grid}>
+  const hasMlPrices = product?.mlPrices?.length > 0
+  const displayPrice = hasMlPrices
+    ? selectedMl?.price
+    : product?.price
 
-                    {/* Фото */}
-                    <div className={styles.imageCol}>
-                        <div className={styles.imageWrap}>
-                            {isNewProduct && <span className={styles.badge}>Новинка</span>}
-                            {image
-                                ? <img src={image} alt={name} className={styles.image} />
-                                : <div className={styles.imagePlaceholder}><span>عطر</span></div>
-                            }
-                        </div>
-                    </div>
+  const handleAdd = () => {
+    addToCart({
+      id:     product._id,
+      name:   product.name,
+      brand:  product.brand,
+      price:  hasMlPrices ? selectedMl.price : product.price,
+      volume: hasMlPrices ? `${selectedMl.ml} мл` : '',
+      qty:    1,
+      image:  product.image,
+    })
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
+  }
 
-                    {/* Инфо */}
-                    <div className={styles.infoCol}>
-                        <p className={styles.brand}>{brand}</p>
-                        <h1 className={styles.name}>{name}</h1>
+  return (
+    <div className={styles.page}>
+      <div className={styles.container}>
 
-                        <div className={styles.meta}>
-                            <span className={styles.metaTag}>{gender}</span>
-                            <span className={styles.metaTag}>{category}</span>
-                            {!inStock && <span className={styles.metaTagOut}>Нет в наличии</span>}
-                        </div>
+        {/* Назад */}
+        <button className={styles.back} onClick={() => navigate(-1)}>
+          ← Назад
+        </button>
 
-                        <p className={styles.price}>{price.toLocaleString('ru')} ₽</p>
+        <div className={styles.grid}>
 
-                        {/* Объём */}
-                        <div className={styles.section}>
-                            <p className={styles.sectionLabel}>Объём</p>
-                            <div className={styles.volumes}>
-                                {volume.map(v => (
-                                    <button
-                                        key={v}
-                                        className={`${styles.volumeBtn} ${selectedVolume === v ? styles.selected : ''}`}
-                                        onClick={() => setSelectedVolume(v)}
-                                    >
-                                        {v}
-                                    </button>
-                                ))}
-                            </div>
-                            {!selectedVolume && <p className={styles.hint}>Выберите объём</p>}
-                        </div>
-
-                        <button
-                            className={`${styles.addBtn} ${!inStock ? styles.disabled : ''} ${added ? styles.success : ''}`}
-                            onClick={handleAddToCart}
-                            disabled={!inStock || !selectedVolume}
-                        >
-                            {added ? '✓ Добавлено в корзину' : !inStock ? 'Нет в наличии' : 'Добавить в корзину'}
-                        </button>
-
-                        <button className={styles.backBtn} onClick={() => navigate(-1)}>
-                            ← Назад
-                        </button>
-
-                        {/* Пирамида нот */}
-                        {notes && (
-                            <div className={styles.pyramid}>
-                                <p className={styles.pyramidTitle}>Пирамида аромата</p>
-                                <div className={styles.pyramidLevels}>
-                                    {[
-                                        { label: 'Верхние ноты',    color: '#c9a96e', items: notes.top   },
-                                        { label: 'Сердечные ноты',  color: '#8a6f47', items: notes.heart },
-                                        { label: 'Базовые ноты',    color: '#4a3a27', items: notes.base  },
-                                    ].map(({ label, color, items }) => (
-                                        <div key={label} className={styles.level}>
-                                            <div className={styles.levelHeader}>
-                                                <span className={styles.levelDot} style={{ background: color }} />
-                                                <span className={styles.levelName}>{label}</span>
-                                            </div>
-                                            <p className={styles.levelNotes}>{items?.join(', ')}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
+          {/* Фото */}
+          <Reveal direction="left">
+            <div className={styles.imageWrap}>
+              {product.image
+                ? <img src={product.image} alt={product.name} className={styles.image} />
+                : (
+                  <div className={styles.imagePlaceholder}>
+                    <span>عطر</span>
+                  </div>
+                )
+              }
+              {product.isNewProduct && (
+                <span className={styles.badgeNew}>Новинка</span>
+              )}
             </div>
+          </Reveal>
+
+          {/* Инфо */}
+          <Reveal direction="right" delay={100}>
+            <div className={styles.info}>
+
+              <p className={styles.brand}>{product.brand}</p>
+              <h1 className={styles.name}>{product.name}</h1>
+              <p className={styles.gender}>{product.gender}</p>
+
+              {/* Описание */}
+              {product.description && (
+                <p className={styles.description}>{product.description}</p>
+              )}
+
+              {/* Калькулятор мл */}
+              {hasMlPrices ? (
+                <div className={styles.mlSection}>
+                  <p className={styles.mlLabel}>Выберите объём</p>
+
+                  <div className={styles.mlVariants}>
+                    {product.mlPrices.map((variant, i) => (
+                      <button
+                        key={i}
+                        className={`${styles.mlVariant} ${
+                          selectedMl?.ml === variant.ml ? styles.mlVariantActive : ''
+                        }`}
+                        onClick={() => setSelectedMl(variant)}
+                      >
+                        <span className={styles.mlVariantMl}>{variant.ml} мл</span>
+                        <span className={styles.mlVariantPrice}>
+                          {variant.price.toLocaleString('ru')} ₽
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {selectedMl && (
+                    <div className={styles.totalPrice}>
+                      <span className={styles.totalLabel}>Итого:</span>
+                      <span className={styles.totalValue}>
+                        {selectedMl.price.toLocaleString('ru')} ₽
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className={styles.priceWrap}>
+                  <p className={styles.price}>
+                    {product.price.toLocaleString('ru')} ₽
+                  </p>
+                </div>
+              )}
+
+              {/* Кнопка */}
+              <button
+                className={`${styles.addBtn} ${added ? styles.addBtnSuccess : ''}`}
+                onClick={handleAdd}
+                disabled={!product.inStock}
+              >
+                {!product.inStock
+                  ? 'Нет в наличии'
+                  : added
+                    ? '✓ Добавлено'
+                    : 'Добавить в корзину'
+                }
+              </button>
+
+              {/* Ноты */}
+              {(product.notes?.top?.length > 0 ||
+                product.notes?.heart?.length > 0 ||
+                product.notes?.base?.length > 0) && (
+                <div className={styles.notes}>
+                  <p className={styles.notesTitle}>Пирамида аромата</p>
+                  <div className={styles.notesGrid}>
+                    {product.notes?.top?.length > 0 && (
+                      <div className={styles.noteRow}>
+                        <span className={styles.noteLabel}>Верхние</span>
+                        <span className={styles.noteValue}>
+                          {product.notes.top.join(', ')}
+                        </span>
+                      </div>
+                    )}
+                    {product.notes?.heart?.length > 0 && (
+                      <div className={styles.noteRow}>
+                        <span className={styles.noteLabel}>Сердце</span>
+                        <span className={styles.noteValue}>
+                          {product.notes.heart.join(', ')}
+                        </span>
+                      </div>
+                    )}
+                    {product.notes?.base?.length > 0 && (
+                      <div className={styles.noteRow}>
+                        <span className={styles.noteLabel}>База</span>
+                        <span className={styles.noteValue}>
+                          {product.notes.base.join(', ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </Reveal>
         </div>
-    )
+      </div>
+    </div>
+  )
 }
