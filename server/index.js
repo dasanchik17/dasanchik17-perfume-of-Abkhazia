@@ -15,7 +15,8 @@ app.use(cors({
             'http://localhost:3000',
             'http://localhost:5173',
             'http://localhost:5174',
-            'https://dasanchik17-perfume-abkhazia.vercel.app'
+            'https://dasanchik17-perfume-abkhazia.vercel.app',
+            'https://perfume-abkhazia.vercel.app'
         ];
 
         // Если origin нет в списке разрешённых, но это не браузер (например, запрос от сервера)
