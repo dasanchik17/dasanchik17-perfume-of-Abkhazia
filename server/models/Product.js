@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema({
     brand:       { type: String, required: true },
     description: { type: String, default: '' },
     price:       { type: Number, required: true },
+    mlPrices:    [{ ml: Number, price: Number }],
     volume:      { type: [String], default: [] },
     gender:      { type: String, enum: ['муж', 'жен', 'унисекс'], required: true },
     category:    { type: String, required: true },
