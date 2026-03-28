@@ -7,7 +7,7 @@ const useCartStore = create(
             items: [],
 
             // Добавить товар (или увеличить кол-во)
-            addItem: (product, volume) => {
+            addToCart: (product, volume) => {
                 const key = `${product.id}-${volume}`
                 const items = get().items
                 const existing = items.find(i => i.key === key)
