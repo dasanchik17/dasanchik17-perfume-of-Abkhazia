@@ -1,4 +1,7 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../../api/index'
+import ProductCard from '../../components/ProductCard/ProductCard'
 import styles from './HomePage.module.css'
 import Reveal from '../../components/Reveal/Reveal'
 
@@ -16,6 +19,14 @@ const STATS = [
 ]
 
 export default function HomePage() {
+    const [products, setProducts] = useState([])
+
+    useEffect(() => {
+      api.get('/products?limit=8')
+        .then(r => setProducts(r.data.products || []))
+        .catch(() => {})
+    }, [])
+
     return (
         <div className={styles.page}>
 
@@ -77,6 +88,31 @@ export default function HomePage() {
                 </div>
             </section>
 
+            {/* Каталог на главной */}
+            {products.length > 0 && (
+              <section className={styles.featured}>
+                <div className={styles.container}>
+                  <Reveal>
+                    <div className={styles.featuredHeader}>
+                      <h2 className={styles.sectionTitle}>
+                        Наша <em>коллекция</em>
+                      </h2>
+                      <Link to="/catalog" className={styles.btnGhost}>
+                        Смотреть все →
+                      </Link>
+                    </div>
+                  </Reveal>
+                  <div className={styles.productsGrid}>
+                    {products.map((p, i) => (
+                      <Reveal key={p._id} delay={i * 80} direction="up">
+                        <ProductCard product={p} />
+                      </Reveal>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
+
             {/* О магазине */}
             <section className={styles.about}>
                 <div className={styles.container}>
@@ -109,7 +145,6 @@ export default function HomePage() {
                     </div>
                 </div>
             </section>
-
         </div>
     )
 }
