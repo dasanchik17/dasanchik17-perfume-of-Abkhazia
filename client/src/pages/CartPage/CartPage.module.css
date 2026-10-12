@@ -53,10 +53,10 @@
     align-items: center;
     gap: 20px;
     padding: 20px;
-    background: var(--color-surface);
+    background: var(--color-bg);
     transition: background var(--transition);
 }
-.item:hover { background: #1e1c18; }
+.item:hover { background: var(--color-surface); }
 
 /* Item image */
 .itemImage {
@@ -71,7 +71,7 @@
     flex-shrink: 0;
 }
 .itemImage img { width: 100%; height: 100%; object-fit: cover; }
-.itemImage span { font-size: 24px; color: rgba(201,169,110,0.2); }
+.itemImage span { font-size: 24px; color: rgba(0,0,0,0.08); }
 
 /* Item info */
 .itemInfo { min-width: 0; }
@@ -89,6 +89,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--color-text);
 }
 .itemVolume {
     font-size: 11px;
@@ -117,7 +118,7 @@
     justify-content: center;
     line-height: 1;
 }
-.qtyBtn:hover { background: var(--color-border); color: var(--color-text); }
+.qtyBtn:hover { background: var(--color-surface); color: var(--color-text); }
 .qtyNum {
     width: 36px;
     text-align: center;
@@ -238,12 +239,52 @@
     .grid { grid-template-columns: 1fr; }
     .summary { position: static; }
     .container { padding: 0 20px; }
-    .item { grid-template-columns: 64px 1fr auto; grid-template-rows: auto auto; gap: 12px; }
-    .itemPrice { grid-column: 2; }
-    .removeBtn { grid-column: 3; grid-row: 1; }
-    .itemQty { grid-column: 2; }
+    .page { padding: 40px 0 80px; }
+
+    .item {
+        grid-template-columns: 64px 1fr auto;
+        grid-template-rows: auto auto auto;
+        gap: 10px;
+        padding: 16px;
+    }
+
+    /* Изображение — строка 1, колонка 1, занимает 3 строки */
+    .itemImage {
+        grid-column: 1;
+        grid-row: 1 / 4;
+        width: 64px;
+    }
+
+    /* Бренд и название — строка 1, колонка 2 */
+    .itemInfo {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    /* Количество — строка 2, колонка 2 */
+    .itemQty {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    /* Цена — строка 3, колонка 2 */
+    .itemPrice {
+        grid-column: 2;
+        grid-row: 3;
+        text-align: left;
+        font-size: 15px;
+    }
+
+    /* Удалить — строка 1, колонка 3 */
+    .removeBtn {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: start;
+    }
 }
+
 @media (max-width: 480px) {
-    .item { grid-template-columns: 56px 1fr auto; }
     .itemName { font-size: 16px; }
+    .title { font-size: 36px; }
+    .pageHeader { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
