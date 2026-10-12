@@ -6,7 +6,7 @@ export default function CartPage() {
     const items        = useCartStore(s => s.items)
     const removeItem   = useCartStore(s => s.removeItem)
     const decreaseItem = useCartStore(s => s.decreaseItem)
-    const addItem      = useCartStore(s => s.addItem)
+    const addToCart      = useCartStore(s => s.addToCart)
     const clearCart    = useCartStore(s => s.clearCart)
     const total        = useCartStore(s => s.total)
 
@@ -67,7 +67,7 @@ export default function CartPage() {
                                     <span className={styles.qtyNum}>{item.qty}</span>
                                     <button
                                         className={styles.qtyBtn}
-                                        onClick={() => addItem(
+                                        onClick={() => addToCart(
                                             { id: item.id, name: item.name, brand: item.brand,
                                                 price: item.price, image: item.image },
                                             item.volume
